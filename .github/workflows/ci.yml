@@ -40,6 +40,8 @@ jobs:
 
       - name: Run tests
         working-directory: backend
+        env:
+          SPRING_PROFILES_ACTIVE: test
         run: mvn -B test
 
       - name: Package (with tests)
