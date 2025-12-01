@@ -1,0 +1,71 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:kanban}
+    username: ${POSTGRES_USER:kanban_user}
+    password: ${POSTGRES_PASSWORD:kanban_pass}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+
+security:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration-ms: ${JWT_EXP_MS:86400000}
+
+logging:
+  level:
+    org.hibernate: INFO
+
+---
+config:
+  activate:
+    on-profile: prod
+
+datasource:
+  url: jdbc:postgresql://${KANBAN_DB_HOST:db}:${KANBAN_DB_PORT:5432}/${KANBAN_DB_NAME:kanban}
+  username: ${KANBAN_DB_USER:kanban_user}
+  password: ${KANBAN_DB_PASSWORD:}
+  driver-class-name: org.postgresql.Driver
+  hikari:
+    maximum-pool-size: 30
+
+jpa:
+  hibernate:
+    ddl-auto: validate
+  properties:
+    hibernate:
+      format_sql: false
+
+security:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration-ms: ${JWT_EXP_MS:86400000}
+
+---
+config:
+  activate:
+    on-profile: test
+
+datasource:
+  url: jdbc:tc:postgresql:15-alpine:///kanban?TC_INITSCRIPT=classpath:sql/init-test.sql
+  driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+  username: ${TEST_DB_USER:kanban_user}
+  password: ${TEST_DB_PASSWORD:kanban_pass}
+
+jpa:
+  hibernate:
+    ddl-auto: update
+  properties:
+    hibernate:
+      format_sql: false

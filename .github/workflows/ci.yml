@@ -1,63 +1,32 @@
-name: CI - Build and Test
+name: CI
 
-on:
-  push:
-    branches:
-      - main
-      - dev
-      - 'feature/**'
-      - 'fix/**'
-  pull_request:
-    branches:
-      - main
-      - dev
+on: [push, pull_request]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
+      - uses: actions/checkout@v4
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'
-          cache: 'maven'
+          java-version: 17
+          distribution: temurin
+      - name: Build + Unit tests
+        run: mvn -f backend/pom.xml -B -DskipTests=false package
 
-      - name: Cache Maven packages
-        uses: actions/cache@v4
+  integration-tests:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
         with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/backend/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-m2-
+          java-version: 17
+          distribution: temurin
 
-      - name: Build (no tests)
-        working-directory: backend
-        run: mvn -B -DskipTests=true clean package
-
-      - name: Run tests
-        working-directory: backend
+      - name: Run integration tests (Testcontainers)
         env:
-          SPRING_PROFILES_ACTIVE: test
-        run: mvn -B test
-
-      - name: Package (with tests)
-        working-directory: backend
-        run: mvn -B -DskipTests=false package
-
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results
-          path: backend/target/surefire-reports || backend/target/failsafe-reports || backend/target
-
-      - name: Show basic info
-        run: |
-          echo "Java version:"
-          java -version
-          echo "Maven version:"
-          mvn -v
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        run: mvn -f backend/pom.xml -DskipTests=false -Pintegration -Dspring.profiles.active=test verify
