@@ -97,7 +97,7 @@ logging:
 
 ---
 # ==============================================
-# PERFIL: test (testes automatizados)
+# PERFIL: test (testes)
 # ==============================================
 spring:
   config:
@@ -106,40 +106,27 @@ spring:
   application:
     name: kanban-backend-test
 
-  datasource:
-    url: jdbc:tc:postgresql:15-alpine:///kanban_test?TC_INITSCRIPT=classpath:sql/init-test.sql
-    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
-    username: ${TEST_POSTGRES_USER:kanban_user}
-    password: ${TEST_POSTGRES_PASSWORD:kanban_pass}
-
   jpa:
     hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        format_sql: false
+      ddl-auto: create-drop
+    show-sql: false
+
+  flyway:
+    enabled: false
 
 springdoc:
   api-docs:
-    enabled: true
-    path: /v3/api-docs
+    enabled: false
   swagger-ui:
-    enabled: true
-    path: /swagger-ui.html
-    operations-sorter: method
-    tags-sorter: alpha
-    try-it-out-enabled: true
-    url: /v3/api-docs
+    enabled: false
 
 server:
-  port: 0  # Porta aleatória para testes
+  port: 0
 
 logging:
   level:
-    org.hibernate: WARN
-    org.springdoc: WARN
+    root: WARN
     com.example.kanban: INFO
-    org.springframework.web: WARN
 
 ---
 # ==============================================
