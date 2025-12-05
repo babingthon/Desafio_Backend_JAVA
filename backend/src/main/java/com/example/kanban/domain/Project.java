@@ -1,7 +1,7 @@
 package com.example.kanban.domain;
 
 import com.example.kanban.domain.enums.ProjectStatus;
-import com.example.kanban.project.calculator.ProjectMetricsCalculator;
+import com.example.kanban.calculator.ProjectMetricsCalculator;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
