@@ -1,4 +1,4 @@
-package com.example.kanban.project.calculator;
+package com.example.kanban.calculator;
 
 import com.example.kanban.domain.Project;
 import com.example.kanban.domain.enums.ProjectStatus;
