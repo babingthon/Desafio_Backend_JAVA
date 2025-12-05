@@ -1,7 +1,12 @@
+# ==============================================
+# PERFIL: local (desenvolvimento local)
+# ==============================================
 spring:
   config:
     activate:
       on-profile: local
+  application:
+    name: kanban-backend
 
   datasource:
     url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:kanban}
@@ -17,55 +22,178 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
-security:
-  jwt:
-    secret: ${JWT_SECRET}
-    expiration-ms: ${JWT_EXP_MS:86400000}
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+    try-it-out-enabled: true
+    url: /v3/api-docs
+
+server:
+  port: 8080
 
 logging:
   level:
     org.hibernate: INFO
+    org.springdoc: DEBUG
+    com.example.kanban: DEBUG
+    org.springframework.web: DEBUG
 
 ---
-config:
-  activate:
-    on-profile: prod
+# ==============================================
+# PERFIL: dev (desenvolvimento/estaging)
+# ==============================================
+spring:
+  config:
+    activate:
+      on-profile: dev
+  application:
+    name: kanban-backend-dev
 
-datasource:
-  url: jdbc:postgresql://${KANBAN_DB_HOST:db}:${KANBAN_DB_PORT:5432}/${KANBAN_DB_NAME:kanban}
-  username: ${KANBAN_DB_USER:kanban_user}
-  password: ${KANBAN_DB_PASSWORD:}
-  driver-class-name: org.postgresql.Driver
-  hikari:
-    maximum-pool-size: 30
+  datasource:
+    url: jdbc:postgresql://${DEV_POSTGRES_HOST:dev-db}:${DEV_POSTGRES_PORT:5432}/${DEV_POSTGRES_DB:kanban_dev}
+    username: ${DEV_POSTGRES_USER:kanban_dev_user}
+    password: ${DEV_POSTGRES_PASSWORD:}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
 
-jpa:
-  hibernate:
-    ddl-auto: validate
-  properties:
+  jpa:
     hibernate:
-      format_sql: false
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
-security:
-  jwt:
-    secret: ${JWT_SECRET}
-    expiration-ms: ${JWT_EXP_MS:86400000}
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+    try-it-out-enabled: true
+    url: /v3/api-docs
+
+server:
+  port: ${DEV_SERVER_PORT:8080}
+
+logging:
+  level:
+    org.hibernate: INFO
+    org.springdoc: INFO
+    com.example.kanban: INFO
+    org.springframework.web: INFO
 
 ---
-config:
-  activate:
-    on-profile: test
+# ==============================================
+# PERFIL: test (testes automatizados)
+# ==============================================
+spring:
+  config:
+    activate:
+      on-profile: test
+  application:
+    name: kanban-backend-test
 
-datasource:
-  url: jdbc:tc:postgresql:15-alpine:///kanban?TC_INITSCRIPT=classpath:sql/init-test.sql
-  driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
-  username: ${TEST_DB_USER:kanban_user}
-  password: ${TEST_DB_PASSWORD:kanban_pass}
+  datasource:
+    url: jdbc:tc:postgresql:15-alpine:///kanban_test?TC_INITSCRIPT=classpath:sql/init-test.sql
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    username: ${TEST_POSTGRES_USER:kanban_user}
+    password: ${TEST_POSTGRES_PASSWORD:kanban_pass}
 
-jpa:
-  hibernate:
-    ddl-auto: update
-  properties:
+  jpa:
     hibernate:
-      format_sql: false
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: false
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+    try-it-out-enabled: true
+    url: /v3/api-docs
+
+server:
+  port: 0  # Porta aleatória para testes
+
+logging:
+  level:
+    org.hibernate: WARN
+    org.springdoc: WARN
+    com.example.kanban: INFO
+    org.springframework.web: WARN
+
+---
+# ==============================================
+# PERFIL: prod (produção)
+# ==============================================
+spring:
+  config:
+    activate:
+      on-profile: prod
+  application:
+    name: kanban-backend
+
+  datasource:
+    url: jdbc:postgresql://${PROD_POSTGRES_HOST:prod-db}:${PROD_POSTGRES_PORT:5432}/${PROD_POSTGRES_DB:kanban_prod}
+    username: ${PROD_POSTGRES_USER:}
+    password: ${PROD_POSTGRES_PASSWORD:}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 30
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: false
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    url: /api-docs
+    display-request-duration: true
+    operations-sorter: method
+    tags-sorter: alpha
+    disable-swagger-default-url: true
+    config-url: /api-docs/swagger-config
+    query-config-enabled: true
+    urls:
+      - url: /api-docs
+        name: Kanban API v1
+  paths-to-match: /**
+  packages-to-scan: com.example.kanban.api.controller, com.example.kanban.controller
+  show-actuator: false
+
+server:
+  port: ${PROD_SERVER_PORT:8080}
+
+logging:
+  level:
+    org.hibernate: WARN
+    org.springdoc: WARN
+    com.example.kanban: INFO
+    org.springframework.web: WARN
