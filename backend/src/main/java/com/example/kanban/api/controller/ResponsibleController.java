@@ -19,7 +19,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,8 +36,8 @@ public class ResponsibleController {
 
     @Operation(summary = "Create a new Responsible", description = "Persists a new project responsible and ensures email uniqueness.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Responsible created successfully", content = @Content(schema = @Schema(implementation = ResponsibleResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid input or data validation failure (e.g., email already in use).")
+            @ApiResponse(responseCode = "201", description = "Responsible created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponsibleResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input or data validation failure (e.g., email already in use).", content = @Content(schema = @Schema(hidden = true)))
     })
     @PostMapping
     public ResponseEntity<ResponsibleResponse> createResponsible(@Valid @RequestBody ResponsibleRequest request) {
@@ -48,8 +47,7 @@ public class ResponsibleController {
 
     @Operation(summary = "Get all Responsibles with pagination", description = "Retrieves a paginated list of all project responsibles.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successful retrieval of paginated list."),
-            @ApiResponse(responseCode = "401", description = "Unauthorized.")
+            @ApiResponse(responseCode = "200", description = "Successful retrieval of paginated list.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponsibleResponse.class)))
     })
     @GetMapping
     public ResponseEntity<Page<ResponsibleResponse>> getAllResponsibles(
@@ -74,8 +72,8 @@ public class ResponsibleController {
 
     @Operation(summary = "Get Responsible by ID", description = "Retrieves a single project responsible by its ID.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Responsible found successfully", content = @Content(schema = @Schema(implementation = ResponsibleResponse.class))),
-            @ApiResponse(responseCode = "404", description = "Responsible not found.")
+            @ApiResponse(responseCode = "200", description = "Responsible found successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponsibleResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Responsible not found.", content = @Content(schema = @Schema(hidden = true)))
     })
     @GetMapping("/{id}")
     public ResponseEntity<ResponsibleResponse> getResponsibleById(@PathVariable Long id) {
@@ -85,9 +83,9 @@ public class ResponsibleController {
 
     @Operation(summary = "Update an existing Responsible", description = "Updates details of a project responsible by ID.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Responsible updated successfully", content = @Content(schema = @Schema(implementation = ResponsibleResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid input or email conflict."),
-            @ApiResponse(responseCode = "404", description = "Responsible not found.")
+            @ApiResponse(responseCode = "200", description = "Responsible updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponsibleResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input or email conflict.", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Responsible not found.", content = @Content(schema = @Schema(hidden = true)))
     })
     @PutMapping("/{id}")
     public ResponseEntity<ResponsibleResponse> updateResponsible(@PathVariable Long id, @Valid @RequestBody ResponsibleRequest request) {
@@ -97,8 +95,8 @@ public class ResponsibleController {
 
     @Operation(summary = "Delete a Responsible", description = "Deletes a project responsible by ID.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Responsible deleted successfully"),
-            @ApiResponse(responseCode = "404", description = "Responsible not found."),
+            @ApiResponse(responseCode = "204", description = "Responsible deleted successfully", content = @Content(mediaType = "application/json", schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Responsible not found.", content = @Content(schema = @Schema(hidden = true))),
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteResponsible(@PathVariable Long id) {
