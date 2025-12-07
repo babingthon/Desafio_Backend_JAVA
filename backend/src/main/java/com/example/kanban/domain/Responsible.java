@@ -37,4 +37,9 @@ public class Responsible {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", unique = true, nullable = true)
+    @ToString.Exclude
+    private User user;
 }

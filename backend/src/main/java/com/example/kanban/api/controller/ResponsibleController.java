@@ -1,6 +1,7 @@
 package com.example.kanban.api.controller;
 
 import com.example.kanban.annotations.ApiBearerAuth;
+import com.example.kanban.annotations.IsAdmin;
 import com.example.kanban.api.dto.ResponsibleRequest;
 import com.example.kanban.api.dto.ResponsibleResponse;
 import com.example.kanban.service.IResponsibleService;
@@ -36,18 +37,18 @@ public class ResponsibleController {
     private final IResponsibleService responsibleService;
     private final ResponsibleMapper responsibleMapper;
 
-    @ApiBearerAuth
+    /*@ApiBearerAuth
     @Operation(summary = "Create a new Responsible", description = "Persists a new project responsible and ensures email uniqueness.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Responsible created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponsibleResponse.class))),
             @ApiResponse(responseCode = "400", description = "Invalid input or data validation failure (e.g., email already in use).", content = @Content(schema = @Schema(hidden = true)))
     })
     @PostMapping
-    @PreAuthorize("hasAuthority(RoleConstants.ADMIN)")
+    @IsAdmin
     public ResponseEntity<ResponsibleResponse> createResponsible(@Valid @RequestBody ResponsibleRequest request) {
         Responsible responsible = responsibleService.create(request);
         return new ResponseEntity<>(responsibleMapper.toResponse(responsible), HttpStatus.CREATED);
-    }
+    }*/
 
     @ApiBearerAuth
     @Operation(summary = "Get all Responsibles with pagination", description = "Retrieves a paginated list of all project responsibles.")
@@ -55,7 +56,7 @@ public class ResponsibleController {
             @ApiResponse(responseCode = "200", description = "Successful retrieval of paginated list.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponsibleResponse.class)))
     })
     @GetMapping
-    @PreAuthorize("hasAuthority(RoleConstants.ADMIN)")
+    @IsAdmin
     public ResponseEntity<Page<ResponsibleResponse>> getAllResponsibles(
             @Parameter(description = "Page number (0-based)", example = "0")
             @RequestParam(defaultValue = "0") int page,
@@ -83,7 +84,7 @@ public class ResponsibleController {
             @ApiResponse(responseCode = "404", description = "Responsible not found.", content = @Content(schema = @Schema(hidden = true)))
     })
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority(RoleConstants.ADMIN)")
+    @IsAdmin
     public ResponseEntity<ResponsibleResponse> getResponsibleById(@PathVariable Long id) {
         Responsible responsible = responsibleService.findById(id);
         return ResponseEntity.ok(responsibleMapper.toResponse(responsible));
@@ -97,7 +98,7 @@ public class ResponsibleController {
             @ApiResponse(responseCode = "404", description = "Responsible not found.", content = @Content(schema = @Schema(hidden = true)))
     })
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority(RoleConstants.ADMIN)")
+    @IsAdmin
     public ResponseEntity<ResponsibleResponse> updateResponsible(@PathVariable Long id, @Valid @RequestBody ResponsibleRequest request) {
         Responsible responsible = responsibleService.update(id, request);
         return ResponseEntity.ok(responsibleMapper.toResponse(responsible));
@@ -110,7 +111,7 @@ public class ResponsibleController {
             @ApiResponse(responseCode = "404", description = "Responsible not found.", content = @Content(schema = @Schema(hidden = true))),
     })
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority(RoleConstants.ADMIN)")
+    @IsAdmin
     public ResponseEntity<Void> deleteResponsible(@PathVariable Long id) {
         responsibleService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
