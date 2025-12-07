@@ -3,8 +3,7 @@ package com.example.kanban.domain;
 import com.example.kanban.domain.enums.ProjectStatus;
 import com.example.kanban.calculator.ProjectMetricsCalculator;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -15,7 +14,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "project", schema = "kanban")
 @EqualsAndHashCode(of = "id")

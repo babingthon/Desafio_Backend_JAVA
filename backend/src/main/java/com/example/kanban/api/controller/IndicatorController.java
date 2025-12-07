@@ -1,5 +1,6 @@
 package com.example.kanban.api.controller;
 
+import com.example.kanban.annotations.ApiBearerAuth;
 import com.example.kanban.api.dto.ProjectIndicatorResponse;
 import com.example.kanban.service.IIndicatorService;
 
@@ -25,6 +26,7 @@ public class IndicatorController {
 
     private final IIndicatorService indicatorService;
 
+    @ApiBearerAuth
     @Operation(summary = "Get project count grouped by status", description = "Calculates and returns the total number of projects for each Kanban status.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful retrieval of project counts.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProjectIndicatorResponse.class)))
@@ -35,6 +37,7 @@ public class IndicatorController {
         return ResponseEntity.ok(response);
     }
 
+    @ApiBearerAuth
     @Operation(summary = "Get average delay days grouped by status", description = "Calculates the average number of delay days for projects that are overdue, grouped by status.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful retrieval of average delay days.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProjectIndicatorResponse.class)))

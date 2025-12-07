@@ -1,5 +1,6 @@
 package com.example.kanban.api.controller;
 
+import com.example.kanban.annotations.ApiBearerAuth;
 import com.example.kanban.api.dto.ResponsibleRequest;
 import com.example.kanban.api.dto.ResponsibleResponse;
 import com.example.kanban.service.IResponsibleService;
@@ -34,6 +35,7 @@ public class ResponsibleController {
     private final IResponsibleService responsibleService;
     private final ResponsibleMapper responsibleMapper;
 
+    @ApiBearerAuth
     @Operation(summary = "Create a new Responsible", description = "Persists a new project responsible and ensures email uniqueness.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Responsible created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponsibleResponse.class))),
@@ -45,6 +47,7 @@ public class ResponsibleController {
         return new ResponseEntity<>(responsibleMapper.toResponse(responsible), HttpStatus.CREATED);
     }
 
+    @ApiBearerAuth
     @Operation(summary = "Get all Responsibles with pagination", description = "Retrieves a paginated list of all project responsibles.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful retrieval of paginated list.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponsibleResponse.class)))
@@ -70,6 +73,7 @@ public class ResponsibleController {
         return ResponseEntity.ok(responsePage);
     }
 
+    @ApiBearerAuth
     @Operation(summary = "Get Responsible by ID", description = "Retrieves a single project responsible by its ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Responsible found successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponsibleResponse.class))),
@@ -81,6 +85,7 @@ public class ResponsibleController {
         return ResponseEntity.ok(responsibleMapper.toResponse(responsible));
     }
 
+    @ApiBearerAuth
     @Operation(summary = "Update an existing Responsible", description = "Updates details of a project responsible by ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Responsible updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponsibleResponse.class))),
@@ -93,6 +98,7 @@ public class ResponsibleController {
         return ResponseEntity.ok(responsibleMapper.toResponse(responsible));
     }
 
+    @ApiBearerAuth
     @Operation(summary = "Delete a Responsible", description = "Deletes a project responsible by ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Responsible deleted successfully", content = @Content(mediaType = "application/json", schema = @Schema(hidden = true))),
