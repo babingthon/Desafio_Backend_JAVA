@@ -24,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
@@ -101,6 +102,7 @@ public class ProjectController {
             @ApiResponse(responseCode = "404", description = "Project not found.", content = @Content(schema = @Schema(hidden = true)))
     })
     @PatchMapping("/{id}/status")
+    @PreAuthorize("hasAuthority(RoleConstants.USER)")
     public ResponseEntity<ProjectResponse> transitionStatus(@PathVariable Long id, @Valid @RequestBody StatusTransitionRequest request) {
         Project project = projectService.transitionStatus(id, request);
         return ResponseEntity.ok(projectMapper.toResponse(project));
@@ -114,6 +116,7 @@ public class ProjectController {
             @ApiResponse(responseCode = "404", description = "One or more Responsible IDs were not found.", content = @Content(schema = @Schema(hidden = true)))
     })
     @PostMapping
+    @PreAuthorize("hasAuthority(RoleConstants.USER)")
     public ResponseEntity<ProjectResponse> createProject(@Valid @RequestBody ProjectRequest request) {
         Project project = projectService.create(request);
         return new ResponseEntity<>(projectMapper.toResponse(project), HttpStatus.CREATED);
@@ -125,6 +128,7 @@ public class ProjectController {
             @ApiResponse(responseCode = "404", description = "Project not found.", content = @Content(schema = @Schema(hidden = true))),
     })
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority(RoleConstants.USER)")
     public ResponseEntity<ProjectResponse> getProjectById(@PathVariable Long id) {
         Project project = projectService.findById(id);
         return ResponseEntity.ok(projectMapper.toResponse(project));
@@ -138,6 +142,7 @@ public class ProjectController {
             @ApiResponse(responseCode = "404", description = "Project or Responsible not found.", content = @Content(schema = @Schema(hidden = true))),
     })
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority(RoleConstants.USER)")
     public ResponseEntity<ProjectResponse> updateProject(@PathVariable Long id, @Valid @RequestBody ProjectRequest request) {
         Project project = projectService.update(id, request);
         return ResponseEntity.ok(projectMapper.toResponse(project));
@@ -150,6 +155,7 @@ public class ProjectController {
             @ApiResponse(responseCode = "404", description = "Project not found.", content = @Content(schema = @Schema(hidden = true))),
     })
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority(RoleConstants.ADMIN)")
     public ResponseEntity<Void> deleteProject(@PathVariable Long id) {
         projectService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

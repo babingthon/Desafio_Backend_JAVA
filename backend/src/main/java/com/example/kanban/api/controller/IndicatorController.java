@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,6 +33,7 @@ public class IndicatorController {
             @ApiResponse(responseCode = "200", description = "Successful retrieval of project counts.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProjectIndicatorResponse.class)))
     })
     @GetMapping("/count-by-status")
+    @PreAuthorize("hasAuthority(RoleConstants.ROLE_USER)")
     public ResponseEntity<List<ProjectIndicatorResponse>> getProjectCountByStatus() {
         List<ProjectIndicatorResponse> response = indicatorService.getProjectCountByStatus();
         return ResponseEntity.ok(response);
