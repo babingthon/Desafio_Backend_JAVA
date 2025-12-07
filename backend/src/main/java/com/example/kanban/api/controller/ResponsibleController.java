@@ -22,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
@@ -42,6 +43,7 @@ public class ResponsibleController {
             @ApiResponse(responseCode = "400", description = "Invalid input or data validation failure (e.g., email already in use).", content = @Content(schema = @Schema(hidden = true)))
     })
     @PostMapping
+    @PreAuthorize("hasAuthority(RoleConstants.ADMIN)")
     public ResponseEntity<ResponsibleResponse> createResponsible(@Valid @RequestBody ResponsibleRequest request) {
         Responsible responsible = responsibleService.create(request);
         return new ResponseEntity<>(responsibleMapper.toResponse(responsible), HttpStatus.CREATED);
@@ -53,6 +55,7 @@ public class ResponsibleController {
             @ApiResponse(responseCode = "200", description = "Successful retrieval of paginated list.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponsibleResponse.class)))
     })
     @GetMapping
+    @PreAuthorize("hasAuthority(RoleConstants.ADMIN)")
     public ResponseEntity<Page<ResponsibleResponse>> getAllResponsibles(
             @Parameter(description = "Page number (0-based)", example = "0")
             @RequestParam(defaultValue = "0") int page,
@@ -80,6 +83,7 @@ public class ResponsibleController {
             @ApiResponse(responseCode = "404", description = "Responsible not found.", content = @Content(schema = @Schema(hidden = true)))
     })
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority(RoleConstants.ADMIN)")
     public ResponseEntity<ResponsibleResponse> getResponsibleById(@PathVariable Long id) {
         Responsible responsible = responsibleService.findById(id);
         return ResponseEntity.ok(responsibleMapper.toResponse(responsible));
@@ -93,6 +97,7 @@ public class ResponsibleController {
             @ApiResponse(responseCode = "404", description = "Responsible not found.", content = @Content(schema = @Schema(hidden = true)))
     })
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority(RoleConstants.ADMIN)")
     public ResponseEntity<ResponsibleResponse> updateResponsible(@PathVariable Long id, @Valid @RequestBody ResponsibleRequest request) {
         Responsible responsible = responsibleService.update(id, request);
         return ResponseEntity.ok(responsibleMapper.toResponse(responsible));
@@ -105,6 +110,7 @@ public class ResponsibleController {
             @ApiResponse(responseCode = "404", description = "Responsible not found.", content = @Content(schema = @Schema(hidden = true))),
     })
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority(RoleConstants.ADMIN)")
     public ResponseEntity<Void> deleteResponsible(@PathVariable Long id) {
         responsibleService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
