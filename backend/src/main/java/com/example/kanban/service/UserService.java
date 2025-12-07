@@ -1,11 +1,17 @@
 package com.example.kanban.service;
 
+import com.example.kanban.api.dto.user.RegistrationRequest;
+import com.example.kanban.domain.Responsible;
 import com.example.kanban.domain.User;
+import com.example.kanban.domain.enums.Role;
+import com.example.kanban.exception.ResourceNotFoundException;
+import com.example.kanban.repository.ResponsibleRepository;
 import com.example.kanban.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,6 +19,8 @@ import org.springframework.stereotype.Service;
 public class UserService implements IUserService, UserDetailsService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final ResponsibleRepository responsibleRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -23,5 +31,30 @@ public class UserService implements IUserService, UserDetailsService {
     public User findUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+    }
+
+    @Override
+    public User registerNewUser(RegistrationRequest request) {
+        if (userRepository.findByEmail(request.email()).isPresent()) {
+            throw new ResourceNotFoundException("User with email " + request.email() + " already exists.");
+        }
+
+        User user = User.builder()
+                .email(request.email())
+                .password(passwordEncoder.encode(request.password()))
+                .role(Role.USER)
+                .build();
+        user = userRepository.save(user);
+
+        Responsible responsible = new Responsible();
+        responsible.setName(request.name());
+        responsible.setEmail(request.email());
+        responsible.setJobTitle(request.jobTitle());
+
+        responsible.setUser(user);
+
+        responsibleRepository.save(responsible);
+
+        return user;
     }
 }

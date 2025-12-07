@@ -1,6 +1,7 @@
 package com.example.kanban.security;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,12 +18,20 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final JwtRequestFilter jwtRequestFilter;
+    private JwtRequestFilter jwtRequestFilter;
     private final JwtAuthenticationEntryPoint authEntryPoint;
+
+    public SecurityConfig(JwtAuthenticationEntryPoint authEntryPoint) {
+        this.authEntryPoint = authEntryPoint;
+    }
+
+    @Autowired
+    public void setJwtRequestFilter(JwtRequestFilter jwtRequestFilter) {
+        this.jwtRequestFilter = jwtRequestFilter;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -36,7 +45,7 @@ public class SecurityConfig {
                                 "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs", "/v3/api-docs/**",
                                 "/api-docs", "/api-docs/**", "/webjars/**", "/swagger-resources/**",
                                 "/configuration/**", "/favicon.ico", "/actuator/**",
-                                "/api/v1/auth/login"
+                                "/api/v1/auth/login", "/api/v1/users"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

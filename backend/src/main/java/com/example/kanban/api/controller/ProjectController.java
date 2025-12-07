@@ -1,6 +1,8 @@
 package com.example.kanban.api.controller;
 
 import com.example.kanban.annotations.ApiBearerAuth;
+import com.example.kanban.annotations.IsAdmin;
+import com.example.kanban.annotations.IsUser;
 import com.example.kanban.api.dto.ProjectRequest;
 import com.example.kanban.api.dto.ProjectResponse;
 import com.example.kanban.api.dto.StatusTransitionRequest;
@@ -102,7 +104,7 @@ public class ProjectController {
             @ApiResponse(responseCode = "404", description = "Project not found.", content = @Content(schema = @Schema(hidden = true)))
     })
     @PatchMapping("/{id}/status")
-    @PreAuthorize("hasAuthority(RoleConstants.USER)")
+    @IsUser
     public ResponseEntity<ProjectResponse> transitionStatus(@PathVariable Long id, @Valid @RequestBody StatusTransitionRequest request) {
         Project project = projectService.transitionStatus(id, request);
         return ResponseEntity.ok(projectMapper.toResponse(project));
@@ -128,7 +130,7 @@ public class ProjectController {
             @ApiResponse(responseCode = "404", description = "Project not found.", content = @Content(schema = @Schema(hidden = true))),
     })
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority(RoleConstants.USER)")
+    @IsUser
     public ResponseEntity<ProjectResponse> getProjectById(@PathVariable Long id) {
         Project project = projectService.findById(id);
         return ResponseEntity.ok(projectMapper.toResponse(project));
@@ -142,7 +144,7 @@ public class ProjectController {
             @ApiResponse(responseCode = "404", description = "Project or Responsible not found.", content = @Content(schema = @Schema(hidden = true))),
     })
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority(RoleConstants.USER)")
+    @IsUser
     public ResponseEntity<ProjectResponse> updateProject(@PathVariable Long id, @Valid @RequestBody ProjectRequest request) {
         Project project = projectService.update(id, request);
         return ResponseEntity.ok(projectMapper.toResponse(project));
@@ -155,7 +157,7 @@ public class ProjectController {
             @ApiResponse(responseCode = "404", description = "Project not found.", content = @Content(schema = @Schema(hidden = true))),
     })
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority(RoleConstants.ADMIN)")
+    @IsAdmin
     public ResponseEntity<Void> deleteProject(@PathVariable Long id) {
         projectService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

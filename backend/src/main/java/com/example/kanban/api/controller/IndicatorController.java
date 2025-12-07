@@ -1,6 +1,7 @@
 package com.example.kanban.api.controller;
 
 import com.example.kanban.annotations.ApiBearerAuth;
+import com.example.kanban.annotations.IsUser;
 import com.example.kanban.api.dto.ProjectIndicatorResponse;
 import com.example.kanban.service.IIndicatorService;
 
@@ -33,7 +34,7 @@ public class IndicatorController {
             @ApiResponse(responseCode = "200", description = "Successful retrieval of project counts.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProjectIndicatorResponse.class)))
     })
     @GetMapping("/count-by-status")
-    @PreAuthorize("hasAuthority(RoleConstants.ROLE_USER)")
+    @IsUser
     public ResponseEntity<List<ProjectIndicatorResponse>> getProjectCountByStatus() {
         List<ProjectIndicatorResponse> response = indicatorService.getProjectCountByStatus();
         return ResponseEntity.ok(response);

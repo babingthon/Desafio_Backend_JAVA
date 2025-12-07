@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "users")
+@Table(name = "users", schema = "kanban")
 public class User implements UserDetails {
 
     @Id
@@ -41,6 +41,11 @@ public class User implements UserDetails {
     public String getUsername() {
         return email;
     }
+
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Responsible responsible;
 
     @Override
     public boolean isAccountNonExpired() {
