@@ -1,5 +1,6 @@
 package com.example.kanban.api.controller;
 
+import com.example.kanban.annotations.ApiBearerAuth;
 import com.example.kanban.api.dto.ProjectRequest;
 import com.example.kanban.api.dto.ProjectResponse;
 import com.example.kanban.api.dto.StatusTransitionRequest;
@@ -36,6 +37,7 @@ public class ProjectController {
     private final IProjectService projectService;
     private final ProjectMapper projectMapper;
 
+    @ApiBearerAuth
     @Operation(summary = "Get all Projects with pagination", description = "Retrieves a paginated list of all projects.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful retrieval of paginated list.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProjectResponse.class)))
@@ -62,6 +64,7 @@ public class ProjectController {
         return ResponseEntity.ok(responsePage);
     }
 
+    @ApiBearerAuth
     @Operation(summary = "Get Projects filtered by status", description = "Retrieves a paginated list of projects filtered by a specific Kanban status.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful retrieval of paginated list.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProjectResponse.class)))
@@ -90,6 +93,7 @@ public class ProjectController {
         return ResponseEntity.ok(responsePage);
     }
 
+    @ApiBearerAuth
     @Operation(summary = "Transition Project Status", description = "Changes the project status according to the Kanban transition rules, applying automatic date updates and validation blocks.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Status transitioned successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProjectResponse.class))),
@@ -102,6 +106,7 @@ public class ProjectController {
         return ResponseEntity.ok(projectMapper.toResponse(project));
     }
 
+    @ApiBearerAuth
     @Operation(summary = "Create a new Project", description = "Creates a project, associates responsibles, and recalculates its initial status and metrics.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Project created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProjectResponse.class))),
@@ -125,6 +130,7 @@ public class ProjectController {
         return ResponseEntity.ok(projectMapper.toResponse(project));
     }
 
+    @ApiBearerAuth
     @Operation(summary = "Update an existing Project", description = "Updates project details, responsible associations, and recalculates status/metrics.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Project updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProjectResponse.class))),
@@ -137,6 +143,7 @@ public class ProjectController {
         return ResponseEntity.ok(projectMapper.toResponse(project));
     }
 
+    @ApiBearerAuth
     @Operation(summary = "Delete a Project", description = "Deletes a project by ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Project deleted successfully", content = @Content(schema = @Schema(hidden = true))),
