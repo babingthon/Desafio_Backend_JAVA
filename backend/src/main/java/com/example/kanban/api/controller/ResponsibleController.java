@@ -84,7 +84,7 @@ public class ResponsibleController {
             @ApiResponse(responseCode = "404", description = "Responsible not found.", content = @Content(schema = @Schema(hidden = true)))
     })
     @GetMapping("/{id}")
-    @IsAdmin
+    @PreAuthorize("@securityService.isOwnProfile(#id)")
     public ResponseEntity<ResponsibleResponse> getResponsibleById(@PathVariable Long id) {
         Responsible responsible = responsibleService.findById(id);
         return ResponseEntity.ok(responsibleMapper.toResponse(responsible));
@@ -98,7 +98,7 @@ public class ResponsibleController {
             @ApiResponse(responseCode = "404", description = "Responsible not found.", content = @Content(schema = @Schema(hidden = true)))
     })
     @PutMapping("/{id}")
-    @IsAdmin
+    @PreAuthorize("@securityService.isOwnProfile(#id)")
     public ResponseEntity<ResponsibleResponse> updateResponsible(@PathVariable Long id, @Valid @RequestBody ResponsibleRequest request) {
         Responsible responsible = responsibleService.update(id, request);
         return ResponseEntity.ok(responsibleMapper.toResponse(responsible));

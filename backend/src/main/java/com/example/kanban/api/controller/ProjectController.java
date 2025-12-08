@@ -9,6 +9,7 @@ import com.example.kanban.api.dto.StatusTransitionRequest;
 import com.example.kanban.service.IProjectService;
 import com.example.kanban.mapper.ProjectMapper;
 import com.example.kanban.domain.Project;
+import com.example.kanban.domain.User;
 import com.example.kanban.domain.enums.ProjectStatus;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,6 +28,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
@@ -41,12 +43,14 @@ public class ProjectController {
     private final ProjectMapper projectMapper;
 
     @ApiBearerAuth
-    @Operation(summary = "Get all Projects with pagination", description = "Retrieves a paginated list of all projects.")
+    @Operation(summary = "Get all Projects with pagination", description = "Retrieves a paginated list of projects visible to the authenticated user.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful retrieval of paginated list.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProjectResponse.class)))
     })
     @GetMapping
+    @IsUser
     public ResponseEntity<Page<ProjectResponse>> getAllProjects(
+            @AuthenticationPrincipal User user,
             @Parameter(description = "Page number (0-based)", example = "0")
             @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "Number of items per page", example = "10")
@@ -62,7 +66,8 @@ public class ProjectController {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sort));
 
-        Page<Project> projectPage = projectService.findAll(pageable);
+        Page<Project> projectPage = projectService.findAllByUserContext(user, pageable);
+
         Page<ProjectResponse> responsePage = projectPage.map(projectMapper::toResponse);
         return ResponseEntity.ok(responsePage);
     }
@@ -73,7 +78,9 @@ public class ProjectController {
             @ApiResponse(responseCode = "200", description = "Successful retrieval of paginated list.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProjectResponse.class)))
     })
     @GetMapping("/status/{status}")
+    @IsUser
     public ResponseEntity<Page<ProjectResponse>> getProjectsByStatus(
+            @AuthenticationPrincipal User user,
             @PathVariable ProjectStatus status,
             @Parameter(description = "Page number (0-based)", example = "0")
             @RequestParam(defaultValue = "0") int page,
@@ -90,7 +97,7 @@ public class ProjectController {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sort));
 
-        Page<Project> projectPage = projectService.findAllByStatus(status, pageable);
+        Page<Project> projectPage = projectService.findAllByStatusAndUserContext(status, user, pageable);
 
         Page<ProjectResponse> responsePage = projectPage.map(projectMapper::toResponse);
         return ResponseEntity.ok(responsePage);
@@ -104,7 +111,7 @@ public class ProjectController {
             @ApiResponse(responseCode = "404", description = "Project not found.", content = @Content(schema = @Schema(hidden = true)))
     })
     @PatchMapping("/{id}/status")
-    @IsUser
+    @PreAuthorize("@securityService.isProjectResponsible(#id)")
     public ResponseEntity<ProjectResponse> transitionStatus(@PathVariable Long id, @Valid @RequestBody StatusTransitionRequest request) {
         Project project = projectService.transitionStatus(id, request);
         return ResponseEntity.ok(projectMapper.toResponse(project));
@@ -118,19 +125,21 @@ public class ProjectController {
             @ApiResponse(responseCode = "404", description = "One or more Responsible IDs were not found.", content = @Content(schema = @Schema(hidden = true)))
     })
     @PostMapping
-    @PreAuthorize("hasAuthority(RoleConstants.USER)")
-    public ResponseEntity<ProjectResponse> createProject(@Valid @RequestBody ProjectRequest request) {
-        Project project = projectService.create(request);
+    @IsUser
+    public ResponseEntity<ProjectResponse> createProject(@AuthenticationPrincipal User user,
+                                                         @Valid @RequestBody ProjectRequest request) {
+        Project project = projectService.create(request, user);
         return new ResponseEntity<>(projectMapper.toResponse(project), HttpStatus.CREATED);
     }
 
+    @ApiBearerAuth
     @Operation(summary = "Get Project by ID", description = "Retrieves a single project by its ID, including calculated metrics.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Project found successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProjectResponse.class))),
             @ApiResponse(responseCode = "404", description = "Project not found.", content = @Content(schema = @Schema(hidden = true))),
     })
     @GetMapping("/{id}")
-    @IsUser
+    @PreAuthorize("@securityService.isProjectResponsible(#id)")
     public ResponseEntity<ProjectResponse> getProjectById(@PathVariable Long id) {
         Project project = projectService.findById(id);
         return ResponseEntity.ok(projectMapper.toResponse(project));
@@ -144,7 +153,7 @@ public class ProjectController {
             @ApiResponse(responseCode = "404", description = "Project or Responsible not found.", content = @Content(schema = @Schema(hidden = true))),
     })
     @PutMapping("/{id}")
-    @IsUser
+    @PreAuthorize("@securityService.isProjectResponsible(#id)")
     public ResponseEntity<ProjectResponse> updateProject(@PathVariable Long id, @Valid @RequestBody ProjectRequest request) {
         Project project = projectService.update(id, request);
         return ResponseEntity.ok(projectMapper.toResponse(project));
@@ -157,7 +166,7 @@ public class ProjectController {
             @ApiResponse(responseCode = "404", description = "Project not found.", content = @Content(schema = @Schema(hidden = true))),
     })
     @DeleteMapping("/{id}")
-    @IsAdmin
+    @PreAuthorize("@securityService.isProjectResponsible(#id)")
     public ResponseEntity<Void> deleteProject(@PathVariable Long id) {
         projectService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
