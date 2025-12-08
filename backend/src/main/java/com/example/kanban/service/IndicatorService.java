@@ -2,6 +2,7 @@ package com.example.kanban.service;
 
 import com.example.kanban.api.dto.ProjectIndicatorResponse;
 import com.example.kanban.domain.Project;
+import com.example.kanban.domain.User;
 import com.example.kanban.domain.enums.ProjectStatus;
 import com.example.kanban.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,22 +23,31 @@ public class IndicatorService implements IIndicatorService {
     private final ProjectService projectService;
 
     @Override
-    public List<ProjectIndicatorResponse> getProjectCountByStatus() {
-        List<Object[]> results = projectRepository.countProjectsByStatus();
+    public List<ProjectIndicatorResponse> getProjectCountByStatus(User user) {
 
-        return results.stream()
-                .map(row -> new ProjectIndicatorResponse(
-                        (ProjectStatus) row[0],
-                        ((Long) row[1]).doubleValue(),
+        List<Project> filteredProjects = projectService.findAllProjects(user);
+
+        Map<ProjectStatus, Long> countByStatus = filteredProjects.stream()
+                .collect(Collectors.groupingBy(
+                        Project::getStatus,
+                        Collectors.counting()
+                ));
+
+        return countByStatus.entrySet().stream()
+                .map(entry -> new ProjectIndicatorResponse(
+                        entry.getKey(),
+                        entry.getValue().doubleValue(),
                         "PROJECT_COUNT"
                 ))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<ProjectIndicatorResponse> getAverageDelayDaysByStatus() {
+    public List<ProjectIndicatorResponse> getAverageDelayDaysByStatus(User user) {
 
-        Map<ProjectStatus, Double> averageByStatus = projectRepository.findAll().stream()
+        List<Project> filteredProjects = projectService.findAllProjects(user);
+
+        Map<ProjectStatus, Double> averageByStatus = filteredProjects.stream()
                 .filter(project -> project.getDaysOfDelay() != null && project.getDaysOfDelay() > 0)
                 .collect(Collectors.groupingBy(
                         Project::getStatus,
