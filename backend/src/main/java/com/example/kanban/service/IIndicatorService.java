@@ -5,6 +5,9 @@ import com.example.kanban.domain.User; // 💥 NOVO IMPORT 💥
 import java.util.List;
 
 public interface IIndicatorService {
+    List<ProjectIndicatorResponse> getProjectCountByStatus(User user);
+
+    List<ProjectIndicatorResponse> getAverageDelayDaysByStatus(User user);
 
     List<Object[]> countByStatusAndUserContext(User user);
 

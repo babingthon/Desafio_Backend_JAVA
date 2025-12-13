@@ -20,6 +20,16 @@ public class IndicatorService implements IIndicatorService {
 
     private final ProjectRepository projectRepository;
 
+    @Override
+    public List<ProjectIndicatorResponse> getProjectCountByStatus(User user) {
+        return List.of();
+    }
+
+    @Override
+    public List<ProjectIndicatorResponse> getAverageDelayDaysByStatus(User user) {
+        return List.of();
+    }
+
     public List<Object[]> countByStatusAndUserContext(User user) {
         if (user.getRole() == Role.ADMIN) {
             return projectRepository.countProjectsByStatus();
