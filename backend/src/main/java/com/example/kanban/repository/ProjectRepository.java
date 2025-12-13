@@ -41,4 +41,11 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
             "AND p.scheduled_end_date < CURRENT_DATE " +
             "GROUP BY p.status", nativeQuery = true)
     List<Object[]> calculateAverageDelayDaysByResponsibleId(@Param("responsibleId") Long responsibleId);
+
+    @Query(value = "SELECT p.status, COUNT(p.id) " +
+            "FROM kanban.project p " +
+            "JOIN kanban.project_responsible pr ON p.id = pr.project_id " +
+            "WHERE pr.responsible_id = :responsibleId " +
+            "GROUP BY p.status", nativeQuery = true)
+    List<Object[]> countProjectsByStatusByResponsibleId(@Param("responsibleId") Long responsibleId);
 }
