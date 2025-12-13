@@ -27,4 +27,8 @@ public interface IProjectService {
     Page<Project> findAllByStatusAndUserContext(ProjectStatus status, User user, Pageable pageable);
 
     List<Project> findAllProjects(User user);
+
+    List<Object[]> calculateAverageDelayDaysAndUserContext(User user);
+
+    List<Object[]> countByStatusAndUserContext(User user);
 }

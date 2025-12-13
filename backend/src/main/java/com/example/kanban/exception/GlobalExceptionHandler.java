@@ -2,6 +2,7 @@ package com.example.kanban.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -61,5 +62,21 @@ public class GlobalExceptionHandler {
                 HttpStatus.INTERNAL_SERVER_ERROR.value()
         );
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorDetails> handleAccessDeniedException(AccessDeniedException ex, WebRequest request) {
+
+        String details = request.getDescription(false);
+        String message = "Access Denied: You do not have the required permissions (Role/Authority).";
+
+        ErrorDetails errorDetails = new ErrorDetails(
+                LocalDateTime.now(),
+                message,
+                details,
+                HttpStatus.FORBIDDEN.value()
+        );
+
+        return new ResponseEntity<>(errorDetails, HttpStatus.FORBIDDEN);
     }
 }

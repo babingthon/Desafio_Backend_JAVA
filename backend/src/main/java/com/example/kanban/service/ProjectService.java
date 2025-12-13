@@ -3,8 +3,8 @@ package com.example.kanban.service;
 import com.example.kanban.api.dto.ProjectRequest;
 import com.example.kanban.api.dto.StatusTransitionRequest;
 import com.example.kanban.calculator.ProjectMetricsCalculator;
-import com.example.kanban.domain.User; // 💥 NOVO IMPORT
-import com.example.kanban.domain.enums.Role; // 💥 NOVO IMPORT
+import com.example.kanban.domain.User;
+import com.example.kanban.domain.enums.Role;
 import com.example.kanban.exception.ResourceNotFoundException;
 import com.example.kanban.mapper.ProjectMapper;
 import com.example.kanban.repository.ProjectRepository;
@@ -32,6 +32,34 @@ public class ProjectService implements IProjectService {
     private final ProjectRepository projectRepository;
     private final ResponsibleRepository responsibleRepository;
     private final ProjectMapper projectMapper;
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Object[]> countByStatusAndUserContext(User user) {
+        if (user.getRole() == Role.ADMIN) {
+            return projectRepository.countProjectsByStatus();
+        } else {
+            Responsible responsible = user.getResponsible();
+            if (responsible == null) {
+                return List.of();
+            }
+            return projectRepository.countProjectsByStatusByResponsible(responsible);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Object[]> calculateAverageDelayDaysAndUserContext(User user) {
+        if (user.getRole() == Role.ADMIN) {
+            return projectRepository.calculateAverageDelayDays();
+        } else {
+            Responsible responsible = user.getResponsible();
+            if (responsible == null) {
+                return List.of();
+            }
+            return projectRepository.calculateAverageDelayDaysByResponsibleId(responsible.getId());
+        }
+    }
 
     @Override
     public Project create(ProjectRequest request, User user) {
