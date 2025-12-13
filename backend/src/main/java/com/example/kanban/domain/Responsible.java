@@ -2,18 +2,18 @@ package com.example.kanban.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.Builder;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
+@Builder
+@Entity
 @Table(name = "responsible", schema = "kanban")
 @EqualsAndHashCode(of = "id")
 public class Responsible {

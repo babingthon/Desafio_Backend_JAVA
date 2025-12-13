@@ -8,4 +8,8 @@ public interface IIndicatorService {
     List<ProjectIndicatorResponse> getProjectCountByStatus(User user);
 
     List<ProjectIndicatorResponse> getAverageDelayDaysByStatus(User user);
+
+    List<Object[]> countByStatusAndUserContext(User user);
+
+    List<Object[]> calculateAverageDelayDaysAndUserContext(User user);
 }
