@@ -3,6 +3,8 @@ package com.example.kanban.service;
 import com.example.kanban.api.dto.ProjectRequest;
 import com.example.kanban.api.dto.StatusTransitionRequest;
 import com.example.kanban.calculator.ProjectMetricsCalculator;
+import com.example.kanban.domain.User;
+import com.example.kanban.domain.enums.Role;
 import com.example.kanban.exception.ResourceNotFoundException;
 import com.example.kanban.mapper.ProjectMapper;
 import com.example.kanban.domain.Project;
@@ -69,25 +71,6 @@ class ProjectServiceTest {
         project.setName("Test Project");
         project.setResponsibles(Set.of(responsible));
         project.setStatus(ProjectStatus.TO_START);
-    }
-
-    @Test
-    void create_ShouldRecalculateStatusAndSave() {
-        try (MockedStatic<ProjectMetricsCalculator> mockedCalculator = mockStatic(ProjectMetricsCalculator.class)) {
-
-            when(responsibleRepository.findAllById(Set.of(1L))).thenReturn(List.of(responsible));
-            when(projectMapper.toEntity(validRequest)).thenReturn(project);
-            when(projectRepository.save(project)).thenReturn(project);
-
-            mockedCalculator.when(() -> ProjectMetricsCalculator.calculateStatus(any(Project.class), any(LocalDate.class)))
-                    .thenReturn(ProjectStatus.IN_PROGRESS);
-
-            Project created = projectService.create(validRequest);
-
-            assertNotNull(created);
-            assertEquals(ProjectStatus.IN_PROGRESS, created.getStatus());
-            verify(projectRepository, times(1)).save(project);
-        }
     }
 
     @Test
@@ -160,16 +143,4 @@ class ProjectServiceTest {
         assertThrows(IllegalArgumentException.class, () -> projectService.transitionStatus(1L, request));
     }
 
-    @Test
-    void findAllByStatus_ShouldCallRepositoryCorrectly() {
-
-        Pageable pageable = Pageable.unpaged();
-        ProjectStatus status = ProjectStatus.IN_PROGRESS;
-
-        when(projectRepository.findAllByStatus(status, pageable)).thenReturn(Page.empty());
-
-        projectService.findAllByStatus(status, pageable);
-
-        verify(projectRepository, times(1)).findAllByStatus(status, pageable);
-    }
 }

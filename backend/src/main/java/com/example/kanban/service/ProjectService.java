@@ -3,6 +3,8 @@ package com.example.kanban.service;
 import com.example.kanban.api.dto.ProjectRequest;
 import com.example.kanban.api.dto.StatusTransitionRequest;
 import com.example.kanban.calculator.ProjectMetricsCalculator;
+import com.example.kanban.domain.User; // 💥 NOVO IMPORT
+import com.example.kanban.domain.enums.Role; // 💥 NOVO IMPORT
 import com.example.kanban.exception.ResourceNotFoundException;
 import com.example.kanban.mapper.ProjectMapper;
 import com.example.kanban.repository.ProjectRepository;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -31,10 +34,17 @@ public class ProjectService implements IProjectService {
     private final ProjectMapper projectMapper;
 
     @Override
-    public Project create(ProjectRequest request) {
+    public Project create(ProjectRequest request, User user) {
         Project project = projectMapper.toEntity(request);
 
         Set<Responsible> responsibles = loadResponsibles(request.responsibleIds());
+
+        Responsible creatorResponsible = user.getResponsible();
+        if (creatorResponsible == null) {
+            throw new IllegalStateException("Authenticated User does not have a linked Responsible profile.");
+        }
+        responsibles.add(creatorResponsible);
+
         project.setResponsibles(responsibles);
 
         recalculateStatusAndMetrics(project);
@@ -62,19 +72,6 @@ public class ProjectService implements IProjectService {
         return projectRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Project not found with ID: " + id));
     }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Page<Project> findAll(Pageable pageable) {
-        return projectRepository.findAll(pageable);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Page<Project> findAllByStatus(ProjectStatus status, Pageable pageable) {
-        return projectRepository.findAllByStatus(status, pageable);
-    }
-
 
     @Override
     public void delete(Long id) {
@@ -110,8 +107,35 @@ public class ProjectService implements IProjectService {
         return projectRepository.save(project);
     }
 
-    private void applyTransitionLogic(Project project, ProjectStatus current, ProjectStatus next, LocalDate today) {
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Project> findAllByUserContext(User user, Pageable pageable) {
+        if (user.getRole() == Role.ADMIN) {
+            return projectRepository.findAll(pageable);
+        } else {
+            Responsible responsible = user.getResponsible();
+            if (responsible == null) {
+                return Page.empty(pageable);
+            }
+            return projectRepository.findAllByResponsiblesContains(responsible, pageable);
+        }
+    }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Project> findAllByStatusAndUserContext(ProjectStatus status, User user, Pageable pageable) {
+        if (user.getRole() == Role.ADMIN) {
+            return projectRepository.findAllByStatus(status, pageable);
+        } else {
+            Responsible responsible = user.getResponsible();
+            if (responsible == null) {
+                return Page.empty(pageable);
+            }
+            return projectRepository.findAllByStatusAndResponsiblesContains(status, responsible, pageable);
+        }
+    }
+
+    private void applyTransitionLogic(Project project, ProjectStatus current, ProjectStatus next, LocalDate today) {
         switch (current) {
             case TO_START:
                 if (next == ProjectStatus.IN_PROGRESS) {
@@ -170,5 +194,20 @@ public class ProjectService implements IProjectService {
             throw new ResourceNotFoundException("One or more Responsible IDs were not found.");
         }
         return responsibles;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Project> findAllProjects(User user) {
+        if (user.getRole() == Role.ADMIN) {
+            return projectRepository.findAll();
+        } else {
+            Responsible responsible = user.getResponsible();
+            if (responsible == null) {
+                return List.of();
+            }
+
+            return projectRepository.findAllByResponsiblesContains(responsible);
+        }
     }
 }
