@@ -1,0 +1,51 @@
+<div class="login-container flex justify-content-center align-items-center h-screen">
+  <div class="surface-card p-5 shadow-2 border-round-xl w-full" style="max-width: 420px;">
+
+    <div class="flex justify-content-center mb-4">
+      <div class="flex align-items-center justify-content-center border-round-xl shadow-2 header-icon">
+        <i class="pi pi-th-large text-4xl text-white"></i>
+      </div>
+    </div>
+
+    <div class="text-center mb-5">
+      <div class="text-900 text-3xl font-bold mb-2">Sistema Kanban</div>
+      <span class="text-600 font-medium">Gerenciamento inteligente de projetos</span>
+    </div>
+
+    <form (ngSubmit)="onLogin()" #loginForm="ngForm">
+      <div class="flex flex-column gap-3">
+        <div>
+          <label for="email" class="block text-900 font-semibold mb-2">E-mail</label>
+          <p-iconfield>
+            <p-inputicon class="pi pi-envelope"></p-inputicon>
+            <input name="username" id="email" autocomplete="email" type="email" pInputText placeholder="seu@email.com"
+              class="w-full p-3" [(ngModel)]="username" required>
+          </p-iconfield>
+        </div>
+
+        <div>
+          <label for="password" class="block text-900 font-semibold mb-2">Senha</label>
+          <p-iconfield>
+            <p-inputicon class="pi pi-lock"></p-inputicon>
+            <p-password autocomplete="current-password" name="password" [(ngModel)]="password" [toggleMask]="true"
+              [feedback]="false" placeholder="••••••••" styleClass="w-full" inputStyleClass="w-full p-3"
+              [required]="true">
+            </p-password>
+          </p-iconfield>
+        </div>
+
+        <div class="flex align-items-center justify-content-end">
+          <a class="font-medium no-underline text-blue-600 cursor-pointer text-sm hover:underline">Esqueci minha
+            senha</a>
+        </div>
+
+        <p-button type="submit" label="Entrar" icon="pi pi-sign-in"
+          styleClass="w-full p-3 text-lg font-bold border-round-lg mt-2" [disabled]="!loginForm.form.valid"></p-button>
+
+        <div class="text-center mt-5">
+          <span class="text-500 text-xs white-space-nowrap">
+            Acesso seguro • Seus dados estão protegidos
+          </span>
+        </div>
+      </div>
+    </form>

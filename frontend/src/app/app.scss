@@ -1,0 +1,30 @@
+.login-container {
+  // Gradiente suave de fundo igual ao da imagem
+  background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+}
+
+.login-card {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.header-icon {
+  width: 60px;
+  height: 60px;
+  background-color: #1a56db !important; // Azul da imagem
+}
+
+// Customizando o foco dos inputs para o azul da imagem
+:host ::ng-deep {
+  .p-inputtext:focus {
+    border-color: #1a56db !important;
+    box-shadow: 0 0 0 0.2rem rgba(26, 86, 219, 0.2) !important;
+  }
+
+  .p-button {
+    background: #1a56db;
+    border: none;
+    &:hover {
+      background: #1649b3 !important;
+    }
+  }
+}
