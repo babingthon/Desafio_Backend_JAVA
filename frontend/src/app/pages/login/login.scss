@@ -1,0 +1,38 @@
+.login-container {
+  background: linear-gradient(180deg, #f0f4f8 0%, #e2e8f0 100%);
+}
+
+.header-icon {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+}
+
+// Ajuste para garantir que o ícone fique por cima do input no PrimeNG 18
+:host ::ng-deep {
+  .p-iconfield {
+    display: block;
+    width: 100%;
+  }
+
+  .p-inputicon {
+    top: 50% !important;
+    margin-top: -0.5rem !important;
+    left: 1rem !important;
+    color: #94a3b8;
+  }
+
+  .p-inputtext {
+    padding-left: 3rem !important; // Abre espaço para o ícone à esquerda
+    border-radius: 10px;
+  }
+
+  // Ajuste específico para o componente de senha do PrimeNG
+  .p-password input {
+    padding-left: 3rem !important;
+  }
+}
+
+.white-space-nowrap {
+  white-space: nowrap;
+}

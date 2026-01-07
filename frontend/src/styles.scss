@@ -1,7 +1,13 @@
 @import 'primeicons/primeicons.css';
 @import 'primeflex/primeflex.css';
 
+:root {
+  --font-family: 'Inter', sans-serif;
+}
+
 body {
   margin: 0;
   font-family: var(--font-family);
+  -webkit-font-smoothing: antialiased;
+  background: #f4f7fa;
 }
