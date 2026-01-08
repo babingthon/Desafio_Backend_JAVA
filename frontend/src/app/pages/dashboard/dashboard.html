@@ -1,1 +1,56 @@
-<p>dashboard works!</p>
+<div class="p-5 surface-ground min-h-screen font-inter">
+
+  <div class="flex align-items-center justify-content-between mb-6 px-2">
+    <div class="flex align-items-center gap-3">
+      <div class="bg-blue-800 p-3 border-round-xl shadow-2">
+        <i class="pi pi-th-large text-white text-3xl"></i>
+      </div>
+      <div>
+        <h1 class="m-0 text-900 text-3xl font-bold tracking-tight">Project Management System</h1>
+        <p class="m-0 text-600 font-medium text-lg">Data intelligence and indicators dashboard</p>
+      </div>
+    </div>
+
+    <div *ngIf="currentUser; else loadingSkeleton"
+      class="flex align-items-center gap-3 cursor-pointer p-2 border-round-xl hover:surface-200 transition-duration-200"
+      (click)="menu.toggle($event)">
+
+      <div class="text-right hidden md:block">
+        <span class="block text-900 font-bold line-height-1 mb-1">{{ currentUser?.name }}</span>
+        <span class="text-xs text-600 font-medium uppercase tracking-wider">{{ currentUser?.jobTitle }}</span>
+      </div>
+
+      <p-avatar [label]="getInitials(currentUser?.name)" shape="circle" size="large"
+        styleClass="bg-blue-800 text-white font-bold shadow-1"></p-avatar>
+      <i class="pi pi-angle-down text-600"></i>
+
+      <p-menu #menu [model]="profileMenuItems" [popup]="true"></p-menu>
+    </div>
+
+    <ng-template #loadingSkeleton>
+      <div class="flex align-items-center gap-3 p-2">
+        <div class="hidden md:block">
+          <div class="skeleton-line w-5rem mb-1"></div>
+          <div class="skeleton-line w-3rem"></div>
+        </div>
+        <div class="w-3rem h-3rem border-circle surface-300 skeleton-animation"></div>
+      </div>
+    </ng-template>
+  </div>
+
+  <div class="grid mb-6">
+    <div *ngFor="let stat of stats" class="col-12 md:col-6 lg:col px-3">
+      <div class="p-4 border-round-xl bg-white shadow-soft kpi-card border-1 border-50">
+        <div class="flex align-items-center gap-4">
+          <div [class]="'bg-' + stat.color + '-50 p-3 border-round-lg'">
+            <i [class]="stat.icon + ' text-' + stat.color + '-500 text-2xl'"></i>
+          </div>
+          <div>
+            <span class="block text-500 font-semibold mb-1 text-sm uppercase">{{ stat.label }}</span>
+            <span class="text-900 font-bold text-3xl">{{ stat.value }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

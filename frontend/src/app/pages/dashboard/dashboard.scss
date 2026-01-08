@@ -1,0 +1,57 @@
+.font-inter {
+  font-family: 'Inter', sans-serif;
+}
+
+.shadow-soft {
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.03) !important;
+}
+
+.task-card {
+  transition: all 0.2s ease;
+  border: 1px solid #f1f5f9;
+  min-height: 220px;
+
+  &:hover {
+    border-color: var(--blue-300);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05) !important;
+  }
+}
+
+.skeleton-line {
+  height: 1rem;
+  background: #e2e8f0;
+  border-round: 4px;
+  position: relative;
+  overflow: hidden;
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0,
+      rgba(255, 255, 255, 0.4) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    animation: shimmer 1.5s infinite;
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.h-6px {
+  height: 6px !important;
+}
+::ng-deep .p-progressbar .p-progressbar-value {
+  background: #3b82f6;
+  border-radius: 10px;
+}
