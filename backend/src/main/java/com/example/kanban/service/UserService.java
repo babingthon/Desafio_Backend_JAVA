@@ -1,6 +1,8 @@
 package com.example.kanban.service;
 
+import com.example.kanban.api.dto.user.PasswordChangeRequest;
 import com.example.kanban.api.dto.user.RegistrationRequest;
+import com.example.kanban.api.dto.user.UserProfileResponse;
 import com.example.kanban.domain.Responsible;
 import com.example.kanban.domain.User;
 import com.example.kanban.domain.enums.Role;
@@ -21,6 +23,30 @@ public class UserService implements IUserService, UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final ResponsibleRepository responsibleRepository;
+
+    @Override
+    public void updatePassword(String email, PasswordChangeRequest request) {
+        User user = findUserByEmail(email);
+
+        if (!passwordEncoder.matches(request.currentPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("The current password provided is incorrect.");
+        }
+
+        user.setPassword(passwordEncoder.encode(request.newPassword()));
+        userRepository.save(user);
+    }
+
+    @Override
+    public UserProfileResponse getLoggedUserProfile(String email) {
+        Responsible responsible = responsibleRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Responsible profile not found for email: " + email));
+
+        return new UserProfileResponse(
+                responsible.getName(),
+                responsible.getJobTitle(),
+                responsible.getEmail()
+        );
+    }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {

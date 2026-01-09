@@ -8,23 +8,23 @@
     </div>
 
     <div class="text-center mb-5">
-      <div class="text-900 text-3xl font-bold mb-2">Sistema Kanban</div>
-      <span class="text-600 font-medium">Gerenciamento inteligente de projetos</span>
+      <div class="text-900 text-3xl font-bold mb-2">Kanban System</div>
+      <span class="text-600 font-medium">Smart project management</span>
     </div>
 
     <form (ngSubmit)="onLogin()" #loginForm="ngForm">
       <div class="flex flex-column gap-3">
         <div>
-          <label for="email" class="block text-900 font-semibold mb-2">E-mail</label>
+          <label for="email" class="block text-900 font-semibold mb-2">E-mail Address</label>
           <p-iconfield>
             <p-inputicon class="pi pi-envelope"></p-inputicon>
-            <input name="username" id="email" autocomplete="email" type="email" pInputText placeholder="seu@email.com"
+            <input name="username" id="email" autocomplete="email" type="email" pInputText placeholder="your@email.com"
               class="w-full p-3" [(ngModel)]="username" required>
           </p-iconfield>
         </div>
 
         <div>
-          <label for="password" class="block text-900 font-semibold mb-2">Senha</label>
+          <label for="password" class="block text-900 font-semibold mb-2">Password</label>
           <p-iconfield>
             <p-inputicon class="pi pi-lock"></p-inputicon>
             <p-password autocomplete="current-password" name="password" [(ngModel)]="password" [toggleMask]="true"
@@ -35,17 +35,20 @@
         </div>
 
         <div class="flex align-items-center justify-content-end">
-          <a class="font-medium no-underline text-blue-600 cursor-pointer text-sm hover:underline">Esqueci minha
-            senha</a>
+          <a class="font-medium no-underline text-blue-600 cursor-pointer text-sm hover:underline">
+            Forgot password?
+          </a>
         </div>
 
-        <p-button type="submit" label="Entrar" icon="pi pi-sign-in"
+        <p-button type="submit" label="Sign In" icon="pi pi-sign-in"
           styleClass="w-full p-3 text-lg font-bold border-round-lg mt-2" [disabled]="!loginForm.form.valid"></p-button>
 
         <div class="text-center mt-5">
           <span class="text-500 text-xs white-space-nowrap">
-            Acesso seguro • Seus dados estão protegidos
+            Secure Access • Your data is protected
           </span>
         </div>
       </div>
     </form>
+  </div>
+</div>
