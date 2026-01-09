@@ -1,0 +1,84 @@
+<p-toast></p-toast>
+
+<div class="p-5 surface-ground min-h-screen font-inter flex justify-content-center">
+  <div class="w-full" style="max-width: 850px;">
+
+    <div class="bg-white p-4 shadow-soft border-round-xl mb-4 flex align-items-center gap-4 border-1 border-50">
+      <p-avatar [label]="getInitials(user.name)" shape="circle" size="xlarge"
+        styleClass="bg-blue-800 text-white font-bold shadow-1"
+        style="width: 80px; height: 80px; font-size: 2rem;"></p-avatar>
+      <div>
+        <h2 class="m-0 text-900 text-3xl font-bold tracking-tight">{{ user.name || 'Loading...' }}</h2>
+        <p class="m-0 text-600 font-medium text-lg">{{ user.jobTitle }}</p>
+      </div>
+    </div>
+
+    <div class="bg-white p-5 shadow-soft border-round-xl mb-4 border-1 border-50">
+      <div class="flex align-items-center gap-3 mb-5">
+        <div class="bg-blue-50 p-2 border-round-lg">
+          <i class="pi pi-user text-blue-500 text-xl"></i>
+        </div>
+        <h3 class="m-0 text-900 font-bold text-xl">Edit Profile</h3>
+      </div>
+
+      <div class="grid">
+        <div class="col-12 md:col-6 field">
+          <label class="block text-900 font-semibold mb-2">Full Name</label>
+          <input pInputText [disabled]="true" [(ngModel)]="user.name" class="w-full p-3 border-round-xl">
+        </div>
+        <div class="col-12 md:col-6 field">
+          <label class="block text-900 font-semibold mb-2">Job Title</label>
+          <input pInputText [disabled]="true" [(ngModel)]="user.jobTitle" class="w-full p-3 border-round-xl">
+        </div>
+        <div class="col-12 field">
+          <label class="block text-900 font-semibold mb-2">Email Address</label>
+          <p-iconfield iconPosition="left" class="w-full">
+            <p-inputicon class="pi pi-envelope"></p-inputicon>
+            <input pInputText [disabled]="true" [value]="user.email" class="w-full p-3 border-round-xl email-disabled">
+            <p-inputicon class="pi pi-lock right-icon"></p-inputicon>
+          </p-iconfield>
+          <small class="text-500 mt-2 block font-medium">Email address cannot be changed</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white p-5 shadow-soft border-round-xl mb-5 border-1 border-50">
+      <div class="flex align-items-center gap-3 mb-5">
+        <div class="bg-red-50 p-2 border-round-lg">
+          <i class="pi pi-lock text-red-500 text-xl"></i>
+        </div>
+        <h3 class="m-0 text-900 font-bold text-xl">Change Password</h3>
+      </div>
+
+      <div class="flex flex-column gap-4">
+        <div class="field">
+          <label class="block text-900 font-semibold mb-2">Current Password</label>
+          <p-password [(ngModel)]="passwordData.currentPassword" [toggleMask]="true" [feedback]="false"
+            placeholder="Enter current password" styleClass="w-full"
+            inputStyleClass="w-full p-3 border-round-xl"></p-password>
+        </div>
+        <div class="field">
+          <label class="block text-900 font-semibold mb-2">New Password</label>
+          <p-password [(ngModel)]="passwordData.newPassword" [toggleMask]="true" [feedback]="false"
+            placeholder="Enter new password" styleClass="w-full"
+            inputStyleClass="w-full p-3 border-round-xl"></p-password>
+        </div>
+        <div class="field">
+          <label class="block text-900 font-semibold mb-2">Confirm New Password</label>
+          <p-password [(ngModel)]="passwordData.confirmPassword" [toggleMask]="true" [feedback]="false"
+            placeholder="Confirm new password" styleClass="w-full"
+            inputStyleClass="w-full p-3 border-round-xl"></p-password>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex justify-content-end gap-3 pb-5">
+      <p-button label="Cancel" (onClick)="goBack()"
+        styleClass="p-button-text p-button-secondary font-bold px-5 py-3 border-round-xl"></p-button>
+      <p-button label="Save Changes" icon="pi pi-check" [loading]="loading"
+        styleClass="p-button-primary font-bold px-6 py-3 border-round-xl shadow-soft"
+        (onClick)="saveChanges()"></p-button>
+    </div>
+
+  </div>
+</div>

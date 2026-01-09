@@ -16,11 +16,11 @@
       (click)="menu.toggle($event)">
 
       <div class="text-right hidden md:block">
-        <span class="block text-900 font-bold line-height-1 mb-1">{{ currentUser?.name }}</span>
-        <span class="text-xs text-600 font-medium uppercase tracking-wider">{{ currentUser?.jobTitle }}</span>
+        <span class="block text-900 font-bold line-height-1 mb-1">{{ currentUser.name }}</span>
+        <span class="text-xs text-600 font-medium uppercase tracking-wider">{{ currentUser.jobTitle }}</span>
       </div>
 
-      <p-avatar [label]="getInitials(currentUser?.name)" shape="circle" size="large"
+      <p-avatar [label]="getInitials(currentUser.name)" shape="circle" size="large"
         styleClass="bg-blue-800 text-white font-bold shadow-1"></p-avatar>
       <i class="pi pi-angle-down text-600"></i>
 

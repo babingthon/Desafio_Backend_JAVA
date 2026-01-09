@@ -31,9 +31,8 @@ import { MenuItem } from 'primeng/api';
 export class DashboardComponent implements OnInit {
   private router = inject(Router);
   private userService = inject(User);
-  private cdr = inject(ChangeDetectorRef); // Injetado para forçar atualização se necessário
+  private cdr = inject(ChangeDetectorRef);
 
-  // Iniciamos como null para o *ngIf do Skeleton funcionar perfeitamente
   currentUser: UserProfileDTO | null = null;
 
   profileMenuItems: MenuItem[] | undefined;
@@ -74,12 +73,16 @@ export class DashboardComponent implements OnInit {
           {
             label: 'Profile Settings',
             icon: 'pi pi-user-edit',
-            command: () => this.router.navigate(['/profile'])
+            command: () => {
+              this.router.navigate(['/profile']);
+            }
           },
           {
             label: 'Sign Out',
             icon: 'pi pi-sign-out',
-            command: () => this.logout()
+            command: () => {
+              this.logout();
+            }
           }
         ]
       }

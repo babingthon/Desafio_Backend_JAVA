@@ -1,0 +1,67 @@
+.font-inter {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Importando padrão de sombra do Dashboard */
+.shadow-soft {
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.03) !important;
+}
+
+::ng-deep {
+  .p-inputtext,
+  .p-password input,
+  .p-password {
+    width: 100% !important;
+    border-radius: 12px !important;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+
+    &:enabled:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 2px #dbeafe;
+    }
+
+    &:disabled {
+      background-color: #f8fafc !important;
+      color: #64748b !important;
+      border-color: #f1f5f9 !important;
+      opacity: 1;
+      cursor: not-allowed;
+    }
+  }
+
+  .p-iconfield {
+    .pi-envelope {
+      left: 1rem;
+      color: #94a3b8;
+    }
+
+    input {
+      padding-left: 3rem !important;
+      padding-right: 3rem !important;
+    }
+
+    .right-icon {
+      position: absolute;
+      right: 1.2rem;
+      left: auto !important;
+      color: #cbd5e1;
+    }
+  }
+
+  .p-button.border-round-xl {
+    border-radius: 12px !important;
+  }
+}
+
+.field {
+  margin-bottom: 1.5rem;
+  label {
+    font-size: 0.875rem;
+    color: #475569;
+  }
+}
+
+.email-disabled {
+  background-color: #f8fafc !important;
+}

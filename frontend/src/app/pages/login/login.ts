@@ -9,6 +9,8 @@ import { ButtonModule } from 'primeng/button';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { AuthService } from '../../services/auth';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-login',
@@ -19,31 +21,34 @@ import { AuthService } from '../../services/auth';
     InputTextModule,
     PasswordModule,
     ButtonModule,
+    ToastModule,
     IconFieldModule,
     InputIconModule
   ],
+  providers: [MessageService],
   templateUrl: './login.html',
   styleUrl: './login.scss'
 })
 export class LoginComponent {
+  private authService = inject(AuthService);
+  private messageService = inject(MessageService);
+  private router = inject(Router);
+
   username = '';
   password = '';
 
-  private authService = inject(AuthService);
-  private router = inject(Router);
-
   onLogin() {
-    if (this.username && this.password) {
-      this.authService.login(this.username, this.password).subscribe({
-        next: (res) => {
-          console.log('Login bem-sucedido!', res);
-          this.router.navigate(['/dashboard']);
-        },
-        error: (err) => {
-          console.error('Falha no login. Verifique suas credenciais e o console Network.');
-          alert('Erro ao logar: ' + (err.error?.message || 'Verifique usuário e senha'));
-        }
-      });
-    }
+    this.authService.login(this.username, this.password).subscribe({
+      next: (response) => {
+        this.router.navigate(['/dashboard']);
+      },
+      error: (err) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Login Failed',
+          detail: 'Invalid email or password. Please try again.'
+        });
+      }
+    });
   }
 }
